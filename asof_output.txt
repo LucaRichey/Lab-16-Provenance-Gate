@@ -1,0 +1,45 @@
+========================================================================
+LAB 16: PROVENANCE GATE & POINT-IN-TIME ADMISSION FILTER
+Decision Date: 2026-03-31
+========================================================================
+
+--- The Row Funnel ---
+Funnel step                            Rows removed
+-------------------------------------------------------
+Quarantined: no ticker                 11
+Exact duplicate                        7
+Published after 2026-03-31             3, 8, 10
+Older vintage replaced by a revision   2
+As-of panel                            1, 4, 5, 6, 9, 12
+
+--- As-Of Panel (Admitted Rows) ---
+Row    Ticker   Month      Published On   Price   
+------------------------------------------------
+1      AAA      2026-01    2026-02-10     101.0   
+4      AAA      2026-02    2026-03-25     103.0   
+5      BBB      2026-01    2026-02-10     98.0    
+6      BBB      2026-02    2026-03-10     97.0    
+9      CCC      2026-01    2026-02-10     110.0   
+12     CCC      2026-02    2026-03-10     111.0   
+
+--- The Signals ---
+Ticker   As-of signal               Naive signal
+------------------------------------------------------------
+AAA      +1.98% (February)          +5.83% (March)
+BBB      -1.02% (February)          -5.15% (March)
+CCC      +0.91% (February)          +1.82% (February, revised)
+
+--- The Sanity Check (Fixed Income Yield & Credit Order) ---
+Row    Fund   Month    Price    Yield      Breaks
+------------------------------------------------------------------------
+1      AAA    Jan      101.0    -0.99%     negative yield
+4      AAA    Feb      103.0    -2.91%     negative yield
+5      BBB    Jan      98.0     +2.04%     nothing
+6      BBB    Feb      97.0     +3.09%     nothing
+9      CCC    Jan      110.0    -9.09%     negative yield; priced above BBB and AAA
+12     CCC    Feb      111.0    -9.91%     negative yield; priced above BBB and AAA
+
+========================================================================
+Conclusion: On time is not the same as true:
+A provenance gate needs a sanity gate behind it.
+========================================================================
